@@ -1,0 +1,79 @@
+
+ 
+int iArr[10]{ 9, 8, 7, 6, 5, 4, 3, 2, 1, 0 };
+
+int CalculateFind(int _iPlusData, int _iCalData)
+{
+      // 21 * 1, 22 * 2. 23 * 3.....
+      int* aresult = nullptr;
+      aresult = find_if(iArr, iArr + 10, [_iPlusData, _iCalData](int _iarr)-> bool { return (_iPlusData + _iarr) * _iarr <= _iCalData; } );
+      return *aresult;
+}
+int main()
+{ 
+     const int iDigitNum = 5;
+     int iData = 10257;
+
+     cout << "입력 데이터 : " << iData << endl;
+
+ 
+
+     // 1. 뒤에서부터 2자리씩 끊어준다.
+     // 10257이라면 1 / 02 / 57 을 맵에 넣어준것.
+     map<int, int> mapReal;
+     int iCount = 0;
+     int iCalculate = iData;
+     while (true)
+     { 
+           int iPow = 100;
+           int 나머지 = iCalculate % iPow;
+           int 몫 = iCalculate / iPow;
+           iCalculate = 몫;
+
+           mapReal.insert(make_pair(iCount, 나머지));
+
+           if (몫 == 0)
+                break;
+           ++iCount;
+    }
+ 
+     bool isFirst = false;       // 정수, 소수점 판단 -> .을 찍기 위한 변수
+     int iPlus = 0;
+     int iSub = 0;
+     iCount = 0;
+     int iPrev = 0;
+     map<int, int>::iterator iter = mapReal.end();
+     while (true)
+     {
+          // 소수점 판단
+          int iterdata = 0;
+          if (iter != mapReal.begin())
+          {
+               --iter;
+               iterdata = iter->second;
+          }
+          else
+          {
+               if( !isFirst )
+                    cout << ".";
+               ++iCount;
+               isFirst = true;
+               if (iCount > iDigitNum)
+                    break;
+          }  
+  
+
+          // 실제 알고리즘
+          int iCal = (iSub * 100) + iterdata;                          // iCal : 뺀 숫자 + 실제 data값
+
+          int iReturnData = CalculateFind(iPrev, iCal);             // iPrev : 이 전에 제곱하기 위해 만들어진값
+
+          iSub  = iCal - ((iPrev + iReturnData) * iReturnData);
+  
+          iPrev = (iPrev * 10) + (iReturnData + iReturnData) * 10;
+
+          cout << iReturnData;
+         }
+     }
+
+}
