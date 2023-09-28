@@ -1,0 +1,32 @@
+#include <string>
+#include <vector>
+#include <unordered_map>
+
+using namespace std;
+
+vector<int> solution(
+    vector<string> name, 
+    vector<int> yearning, 
+    vector<vector<string>> photo) 
+{
+    vector<int> answer;
+    
+    unordered_map<string, int> mapScore;
+    
+    for(int i = 0; i < name.size(); ++i)
+        mapScore[name[i]] = yearning[i];
+    
+    for(int i = 0; i < photo.size(); ++i)
+    {
+        vector<string>& photo_name = photo[i];
+        
+        int iTotalScore  = 0;
+        
+        for(string& name : photo_name)
+            iTotalScore += mapScore[name];
+        
+        answer.push_back(iTotalScore);
+    }
+    
+    return answer;
+}
