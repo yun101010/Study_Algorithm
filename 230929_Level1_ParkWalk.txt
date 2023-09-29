@@ -1,0 +1,116 @@
+#include <string>
+#include <vector>
+
+using namespace std;
+
+
+bool isBlock(int _dir, int _len, int _x, int _y, vector<string> _park)
+{
+	switch (_dir)
+	{
+	case 'E':
+		for (int k = 1; k <= _len; ++k)
+		{
+			if (_park[_y][_x + k] == 'X')
+				return true;
+		}
+		break;
+	case 'W':
+		for (int k = 1; k <= _len; ++k)
+		{
+			if (_park[_y][_x - k] == 'X')
+				return true;
+		}
+		break;
+	case 'S':
+		for (int k = 1; k <= _len; ++k)
+		{
+			if (_park[_y + k][_x] == 'X')
+				return true;
+		}
+		break;
+	case 'N':
+		for (int k = 1; k <= _len; ++k)
+		{
+			if (_park[_y - k][_x] == 'X')
+				return true;
+		}
+		break;
+	}
+
+	return false;
+
+}
+
+vector<int> solution(
+	vector<string> park, vector<string> routes)
+{
+	vector<int> answer;
+
+	int height = park.size();
+	int witdh = park[0].size();
+
+	int x = 0;
+	int y = 0;
+
+	for (int i = 0; i < height; ++i)
+	{
+		for (int j = 0; j < witdh; ++j)
+		{
+			if (park[i][j] == 'S')
+			{
+				x = j;
+				y = i;
+			}
+		}
+	}
+
+	for (string& route : routes)
+	{
+		char dir = route[0];
+		int len = stoi(route.substr(1));
+
+		int x_dis = 0;
+		int y_dis = 0;
+
+		switch (dir)
+		{
+		case 'E':
+			x_dis += len;
+			break;
+		case 'W':
+			x_dis -= len;
+			break;
+		case 'S':
+			y_dis += len;
+			break;
+		case 'N':
+			y_dis -= len;
+			break;
+		}
+
+		if ((x + x_dis) < 0)
+			continue;
+
+		if ((x + x_dis) >= witdh)
+			continue;
+
+		if ((y + y_dis) < 0)
+			continue;
+
+		if ((y + y_dis) >= height)
+			continue;
+
+		if (false == isBlock(dir, len, x, y, park))
+		{
+			x += x_dis;
+			y += y_dis;
+		}
+	}
+
+	answer.push_back(y);
+	answer.push_back(x);
+	
+
+	return answer;
+}
