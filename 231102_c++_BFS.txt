@@ -1,0 +1,65 @@
+// BFS(너비 우선 탐색, breadth-First Search)
+class Graph
+{
+public:
+	// 보통 출발노드 : u, 도착 노드 : v라고 나타냄
+	void AddEdge(int _u, int _v)
+	{
+		vecAdjoin[_u].push_back(_v);
+	}
+
+	void BFS(int _start)
+	{
+		// 방문한 노드 체크 변수
+		vector<bool> vec_visited(vecAdjoin.size(), false);
+
+		queue<int> queue_node;
+		queue_node.push(_start);
+
+		while (queue_node.empty() == false)
+		{
+			int current_node = queue_node.front();
+			queue_node.pop();
+
+			if(vec_visited[current_node] == true)
+				continue;
+
+			vec_visited[current_node] = true;
+
+			cout << "방문한 노드 : " << current_node << endl;
+
+			for (int& node : vecAdjoin[current_node])
+			{
+				if(vec_visited[node] == true)
+					continue;
+
+				queue_node.push(node);
+			}
+		}
+	}
+
+public:
+	Graph(int _vertices) : vertice_count(_vertices), vecAdjoin(_vertices) {};
+private:
+	int vertice_count;							// 그래프의 노드(정점) 수
+	vector<vector<int>> vecAdjoin;
+
+};
+
+
+int main()
+{
+	Graph g(6);
+
+	g.AddEdge(0, 1);
+	g.AddEdge(0, 2);
+	g.AddEdge(1, 3);
+	g.AddEdge(1, 4);
+	g.AddEdge(2, 4);
+	g.AddEdge(3, 5);
+	g.AddEdge(4, 5);
+
+	g.BFS(0);
+	
+	return 0;
+}
