@@ -1,0 +1,109 @@
+
+struct node_info
+{
+	int x = 0;
+	int y = 0;
+	int index = 0;
+	int cost = 0;
+
+	node_info() {};
+	node_info(int _x, int _y, int _index, int _cost) :
+		x(_x), y(_y), index(_index), cost(_cost) {};
+
+	vector<node_info> neighber;
+};
+
+void AddNeighbor(int _x, int _y, int _index, int _icost,
+	const char _szMap, node_info* _pNode)
+{
+	if (_szMap != 'X')
+	{
+		node_info node_neighber(_x, _y, _index, _icost);
+		_pNode->neighber.push_back(node_neighber);
+	}
+}
+
+int* solution(const char* maps[], size_t maps_len)
+{
+	int xsize = strlen(maps[0]);
+	int ysize = maps_len;
+
+	bool* IsVisited = new bool[xsize * ysize];
+
+	for (int i = 0; i < xsize * ysize; ++i)
+		IsVisited[i] = false;
+
+	vector<node_info> vec_node;
+	vec_node.resize(xsize * ysize);
+
+	for (int y = 0; y < ysize; ++y)
+	{
+		for (int x = 0; x < xsize; ++x)
+		{
+			if (maps[y][x] == 'X')
+			{
+				IsVisited[y * xsize + x] = true;
+				continue;
+			}
+
+			node_info pNode = node_info(x, y, y * xsize + x, maps[y][x] - '0');
+
+			if (y > 0)
+				AddNeighbor(x, y - 1, (y - 1) * xsize + x, maps[y - 1][x] - '0', maps[y - 1][x], &pNode);
+			if (y < ysize - 1)
+				AddNeighbor(x, y + 1, (y + 1) * xsize + x, maps[y + 1][x] - '0', maps[y + 1][x], &pNode);
+			if (x > 0)
+				AddNeighbor(x - 1, y, y * xsize + x - 1, maps[y][x - 1] - '0', maps[y][x - 1], &pNode);
+			if (x < xsize - 1)
+				AddNeighbor(x + 1, y, y * xsize + x + 1, maps[y][x + 1] - '0', maps[y][x + 1], &pNode);
+
+			vec_node[pNode.index] = pNode;
+		}
+	}
+
+	int cost = 0;
+	stack<node_info> s;
+	vector<int> vec_cost;
+
+	for (int i = 0; i < vec_node.size(); ++i)
+	{
+		if (IsVisited[i] == true)
+			continue;
+
+		s.push(vec_node[i]);
+		cost = 0;
+
+		// 깊이우선탐색으로 cost를 계산
+		while (s.empty() == false)
+		{
+			node_info pCurrentNode = s.top();
+			s.pop();
+
+			if (IsVisited[pCurrentNode.index] == true)
+				continue;
+			
+			IsVisited[pCurrentNode.index] = true;
+			cost += pCurrentNode.cost;
+
+			for (auto& neighbor : pCurrentNode.neighber)
+			{					
+				neighbor = vec_node[neighbor.index];
+				
+				if (IsVisited[neighbor.index] == false)
+					s.push(neighbor);
+			}
+		}
+
+		if (cost == 0)
+			cost = -1;
+
+		vec_cost.push_back(cost);
+	}
+
+	int* answer = new int[vec_cost.size()];
+
+	for (int i = 0; i < vec_cost.size(); ++i)
+		answer[i] = vec_cost[i];
+
+	return answer;
+}
