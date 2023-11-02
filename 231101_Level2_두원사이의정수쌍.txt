@@ -1,0 +1,64 @@
+#include <stdio.h>
+#include <stdbool.h>
+#include <stdlib.h>
+
+// 처음 구현한 것 -> 시간초과
+int solution(int _r1, int _r2)
+{
+	int ansewr = 0;
+	int overlapdot = 0;
+
+	int r1_square = _r1 * _r1;
+	int r2_square = _r2 * _r2;
+
+	for (int y = 0; y <= _r2; ++y)
+	{
+		int y_square = y * y;
+
+		for (int x = 0; x <= _r2; ++x)
+		{
+			int x_square = x * x;
+
+			if( x_square + y_square > r2_square )
+				continue;
+
+			if (x_square + y_square < r1_square)
+				continue;
+
+			++ansewr;
+
+			if( y == 0 || x == 0 )
+				++overlapdot;
+
+		}
+	}
+
+	return (ansewr * 4) - (overlapdot * 2);
+}
+
+
+
+// 인터넷 찾아본것
+int solution(int _r1, int _r2)
+{
+	int ansewr = 0;
+	long long minRadian = static_cast<long long>(_r1 * _r1);
+	long long maxRadian = static_cast<long long>(_r2 * _r2);
+
+	for (int x = 1; x <= _r2; ++x)
+	{
+		float fMinY = sqrt(minRadian - (long long)x * x);
+		int minY = ceil(fMinY);
+
+		float fMaxY = sqrt(maxRadian - (long long)x * x);
+		int maxY = floor(fMaxY);
+
+		if (_r1 < x)
+			minY = 0;
+
+		ansewr += (maxY - minY + 1);
+	}
+	
+
+	return (ansewr * 4);
+}
